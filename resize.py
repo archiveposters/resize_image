@@ -8,29 +8,40 @@ def resize_image(image, size):
     # Load image and resize using pillow - currently not maintaining aspect ratio
     img = Image.open(image)
     fname = image.replace("images/", "").replace(".jpg", "").replace(".png", "")
-    
 
-    # Convert size from cm to pixels
+     # Convert size from cm to pixels
     newsize = (int(size[0]*37.795275591),int(size[1]*37.795275591)) 
 
-    # Image is resized below - Can be edited to client specification
-    img_new = img.resize(newsize)
-    size_string = f"{size[0]}x{size[1]}"
+    # Set border at 5% of original image
+    border = (int((newsize[0]/100)*5),int((newsize[1]/100)*5))
 
-    # Set border at 5% of resized image
-    border = (int((size[0]/100)*5),int((size[1]/100)*5))
-    img_new_plusborder =  ImageOps.expand(img_new, border=border)
+    img_new =  ImageOps.expand(img, border=border, fill="#fff")
+
+
+    # Image is resized below - Can be edited to specification
+    img_new_resized = img_new.resize(newsize)
+    size_string = f"{size[0]}cmx{size[1]}cm"
+
+    
 
     # Uses image dpi however if info not available will return false
-    if 'dpi' in img_new_plusborder.info.keys() :
-        dpi = img_new.info['dpi'][0] * img_new.info['dpi'][1]
+    if 'dpi' in img_new_resized.info.keys() :
+        dpi = img_new_resized.info['dpi']
         if dpi >= 300:
-            img_new_plusborder.save(f"./resized_images/{fname}-{size_string}.jpg","JPEG")
+            img_new_resized.save(f"./resized_images/{fname}-{size_string}.jpg","JPEG")
             return size_string
         else:
             return False
     else:
-        return "Does Not Contain DPI info"
+        area_cm = size[0]* size[1]
+        area_inch = 0.393701*area_cm
+        dpi = (newsize[0]*newsize[1])/area_inch 
+        if dpi >= 300:
+            img_new_resized.save(f"./resized_images/{fname}-{size_string}.jpg","JPEG")
+            return size_string
+        else:
+            return False
+        
 
 
 def resize_and_write():
