@@ -9,6 +9,8 @@ def resize_image(image, size):
     img = Image.open(image)
     fname = image.replace("images/", "").replace(".jpg", "").replace(".png", "")
     newsize = (size[0],size[1])
+
+    # Image is resized below - Can be edited to client specification
     img_new = img.resize(newsize)
     size_string = f"{size[0]}x{size[1]}"
     
@@ -30,6 +32,9 @@ def resize_and_write():
     image_folder = os.listdir("images")
 
     # Add desired sizes here in nested list format
+    # [[x1,y1],[[x2,y2]] etc
+    #
+
     sizes = [[10,20],[30,50]]
 
     # Will take each file in image_folder and run the resize saving only if dpi matches specification and adding to csv file 
